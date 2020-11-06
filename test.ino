@@ -18,8 +18,10 @@ String name1 = "M.Y";
 String name2 = "E.Y";
 String skorA = "10";
 String subSkorA = "10";
+String ustSkorA = "--";
 String skorB = "10";
 String subSkorB = "10";
+String ustSkorB = "--";
 void setup() {
   delay(3000);
   Serial.begin(115200);
@@ -78,6 +80,7 @@ void processing(){
 
 void updateScreen(){
    dmd.clearScreen( true );
+   //-------------------------------------------------------------------------
    dmd.selectFont(Arial_Black_16);
    char n1[name1.length()+1];
    name1.toCharArray(n1,name1.length()+1);
@@ -85,24 +88,33 @@ void updateScreen(){
    dmd.drawLine(30, 2, 30, 13, GRAPHICS_NORMAL);
    char n2[name2.length()+1];
    name2.toCharArray(n2,name2.length()+1);
-   dmd.drawString(  32,0, n2, 3, GRAPHICS_NORMAL );  
+   dmd.drawString(  38,0, n2, 3, GRAPHICS_NORMAL );  
+   //-------------------------------------------------------------------------
    dmd.selectFont(System5x7);
    char sAs[subSkorA.length()+1];
    subSkorA.toCharArray(sAs,subSkorA.length()+1);
    dmd.drawString(  0,25, sAs, 2, GRAPHICS_NORMAL );
+   char uAs[ustSkorA.length()+1];
+   ustSkorA.toCharArray(uAs,ustSkorA.length()+1);
+   dmd.drawString(  0,17, uAs, 2, GRAPHICS_NORMAL );
    dmd.selectFont(Arial_Black_16);
    char sA[skorA.length()+1];
    skorA.toCharArray(sA,skorA.length()+1);
    dmd.drawString(  skorA.length() == 1 ? subSkorA.length() == 2 ? 16 : 14 :12,16, sA, 2, GRAPHICS_NORMAL );
    dmd.drawLine(30, 18, 30, 29, GRAPHICS_NORMAL);
-   dmd.selectFont(System5x7);
-   char sBs[subSkorB.length()+1];
-   subSkorB.toCharArray(sBs,subSkorB.length()+1);
-   dmd.drawString(  32,25, sBs, 2, GRAPHICS_NORMAL );
+    //-------------------------------------------------------------------------
    dmd.selectFont(Arial_Black_16);
    char sB[skorB.length()+1];
    skorB.toCharArray(sB,skorB.length()+1);
-   dmd.drawString( skorB.length() == 1 ?  subSkorB.length() == 2 ? 47:46:44,16, sB, 2, GRAPHICS_NORMAL );
+   dmd.drawString( skorB.length() == 1 ?  subSkorB.length() == 2 ? 37:40:34,16, sB, 2, GRAPHICS_NORMAL );
+   dmd.selectFont(System5x7);
+   char sBs[subSkorB.length()+1];
+   subSkorB.toCharArray(sBs,subSkorB.length()+1);
+   dmd.drawString(  54,25, sBs, 2, GRAPHICS_NORMAL );   
+   char uBs[ustSkorB.length()+1];
+   ustSkorB.toCharArray(uBs,ustSkorB.length()+1);
+   dmd.drawString(  54,17, uBs, 2, GRAPHICS_NORMAL );
+    //-------------------------------------------------------------------------
     
 }
 
