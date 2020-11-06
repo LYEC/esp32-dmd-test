@@ -2,6 +2,7 @@
 #include <DMD32.h>        //
 #include "fonts/SystemFont5x7.h"
 #include "fonts/Arial_black_16.h"
+#include "WiFi.h"
 #define DISPLAYS_ACROSS 2
 #define DISPLAYS_DOWN 2
 DMD dmd(DISPLAYS_ACROSS, DISPLAYS_DOWN);
@@ -23,6 +24,7 @@ String skorB = "10";
 String subSkorB = "10";
 String ustSkorB = "--";
 void setup() {
+  WiFi.mode(WIFI_OFF);
   delay(3000);
   Serial.begin(115200);
   SerialBT.begin("emta"); 
@@ -71,6 +73,8 @@ void processing(){
           subSkorA = splitData(gelen_veri,'|',2);
           skorB =  splitData(gelen_veri,'|',3);
           subSkorB = splitData(gelen_veri,'|',4);
+          ustSkorA =  splitData(gelen_veri,'|',5);
+          ustSkorB = splitData(gelen_veri,'|',6);
           updateScreen();
           Serial.println("SkorA : " + skorA + " SubSkorA : " +subSkorA );
           Serial.println("SkorB : " + skorB + " SubSkorB : " +subSkorB );
@@ -110,10 +114,10 @@ void updateScreen(){
    dmd.selectFont(System5x7);
    char sBs[subSkorB.length()+1];
    subSkorB.toCharArray(sBs,subSkorB.length()+1);
-   dmd.drawString(  54,25, sBs, 2, GRAPHICS_NORMAL );   
+   dmd.drawString( subSkorB.length() == 2 ? 53 : 58,25, sBs, 2, GRAPHICS_NORMAL );   
    char uBs[ustSkorB.length()+1];
    ustSkorB.toCharArray(uBs,ustSkorB.length()+1);
-   dmd.drawString(  54,17, uBs, 2, GRAPHICS_NORMAL );
+   dmd.drawString( ustSkorB.length() == 2 ? 53 : 58,17, uBs, 2, GRAPHICS_NORMAL );
     //-------------------------------------------------------------------------
     
 }
