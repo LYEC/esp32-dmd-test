@@ -2,32 +2,34 @@
 #include <DMD32.h>        //
 #include "fonts/SystemFont5x7.h"
 #include "fonts/Arial_black_16.h"
-#include "WiFi.h"
+//#include "WiFi.h"
 #define DISPLAYS_ACROSS 2
 #define DISPLAYS_DOWN 2
 DMD dmd(DISPLAYS_ACROSS, DISPLAYS_DOWN);
 BluetoothSerial SerialBT;
 hw_timer_t * timer = NULL;
-void IRAM_ATTR triggerScan()
+int intTriggeredCount = 0;
+void IRAM_ATTR  triggerScan()
 {
-  dmd.scanDisplayBySPI();
+  intTriggeredCount++;
 }
 String gelen_veri = "";
 #define setNames 100
 #define setSkor 200
 String name1 = "M.Y";
-String name2 = "E.Y";
+String name2 = "A.T";
 String skorA = "10";
 String subSkorA = "10";
 String ustSkorA = "--";
 String skorB = "10";
 String subSkorB = "10";
 String ustSkorB = "--";
+int oldValue = 0;
 void setup() {
-  WiFi.mode(WIFI_OFF);
+  //WiFi.mode(WIFI_OFF);
   delay(3000);
   Serial.begin(115200);
-  SerialBT.begin("emta"); 
+  SerialBT.begin("emtagrup"); 
   uint8_t cpuClock = ESP.getCpuFreqMHz();
   timer = timerBegin(0, cpuClock, true);
   timerAttachInterrupt(timer, &triggerScan, true);
@@ -59,13 +61,10 @@ void processing(){
                     last byte
   */
     int header = splitData(gelen_veri,'|',0).toInt();
-    Serial.println("Packet Header : " + String(header));
     switch(header){
       case setNames:
           name1 = splitData(gelen_veri,'|',1);
           name2 = splitData(gelen_veri,'|',2);
-          Serial.println("Name1 : " + name1);
-          Serial.println("Name2 : " + name2);
           updateScreen();
       break;
       case setSkor:
@@ -75,9 +74,7 @@ void processing(){
           subSkorB = splitData(gelen_veri,'|',4);
           ustSkorA =  splitData(gelen_veri,'|',5);
           ustSkorB = splitData(gelen_veri,'|',6);
-          updateScreen();
-          Serial.println("SkorA : " + skorA + " SubSkorA : " +subSkorA );
-          Serial.println("SkorB : " + skorB + " SubSkorB : " +subSkorB );
+          updateScreen();     
       break;
     }
 }
@@ -86,13 +83,14 @@ void updateScreen(){
    dmd.clearScreen( true );
    //-------------------------------------------------------------------------
    dmd.selectFont(Arial_Black_16);
-   char n1[name1.length()+1];
+   char n1[name1.length()+1]; 
    name1.toCharArray(n1,name1.length()+1);
    dmd.drawString(  1,0, n1, 3, GRAPHICS_NORMAL );
-   dmd.drawLine(30, 2, 30, 13, GRAPHICS_NORMAL);
+   dmd.drawLine(31, 2, 31, 13, GRAPHICS_NORMAL);
+   dmd.drawLine(32, 2, 32, 13, GRAPHICS_NORMAL);
    char n2[name2.length()+1];
    name2.toCharArray(n2,name2.length()+1);
-   dmd.drawString(  38,0, n2, 3, GRAPHICS_NORMAL );  
+   dmd.drawString(  34,0, n2, 3, GRAPHICS_NORMAL );  
    //-------------------------------------------------------------------------
    dmd.selectFont(System5x7);
    char sAs[subSkorA.length()+1];
@@ -105,7 +103,8 @@ void updateScreen(){
    char sA[skorA.length()+1];
    skorA.toCharArray(sA,skorA.length()+1);
    dmd.drawString(  skorA.length() == 1 ? subSkorA.length() == 2 ? 16 : 14 :12,16, sA, 2, GRAPHICS_NORMAL );
-   dmd.drawLine(30, 18, 30, 29, GRAPHICS_NORMAL);
+   dmd.drawLine(31, 18, 31, 29, GRAPHICS_NORMAL);
+   dmd.drawLine(32, 18, 32, 29, GRAPHICS_NORMAL);
     //-------------------------------------------------------------------------
    dmd.selectFont(Arial_Black_16);
    char sB[skorB.length()+1];
@@ -127,9 +126,11 @@ void loop() {
     char readByte = SerialBT.read();
     gelen_veri = gelen_veri + readByte;
     if(readByte == '#'){
-      Serial.println("Packet OK!");
       processing();
       gelen_veri = "";
       }      
   }
+  if(intTriggeredCount != oldValue){
+    dmd.scanDisplayBySPI();
+    }
 }
